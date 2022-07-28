@@ -32,21 +32,33 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  // TODO: Add URL for Lambda Service (with valid zone, if yours is not us-east-1)
-  String lambdaUrl = 'https://XXXXXXXXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/add-one';
-
   final http.Client client = http.Client();
 
   Future<void> _incrementCounter() async {
     var request = CalculateRequestModel(value: _counter);
-    final response = await client.post(
-      Uri.parse(lambdaUrl),
-      body: CalculateRequestModel.toJsonString(request),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-    );
+    final response;
+    if(true) {
+      // TODO: Add URL for Lambda Service (with valid zone, if yours is not eu-west-1)
+      String lambdaUrl = 'https://XXXXXXXXX.execute-api.eu-west-1.amazonaws.com/dev/add-one-post';
+
+      response = await client.post(
+        Uri.parse(lambdaUrl),
+        body: CalculateRequestModel.toJsonString(request),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+    } else {
+      // TODO: Add URL for Lambda Service (with valid zone, if yours is not eu-west-1)
+      String lambdaUrl = 'https://XXXXXXXXX.execute-api.eu-west-1.amazonaws.com/dev/add-one';
+
+      response = await client.get(
+        Uri.parse('$lambdaUrl?value=$_counter'),
+        headers: {
+          "Content-Type": "application/json"
+        },
+      );
+    }
     var next = CalculateResponseModel.fromJsonString(response.body).value;
 
     setState(() {
